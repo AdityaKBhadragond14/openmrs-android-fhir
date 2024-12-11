@@ -60,6 +60,7 @@ import kotlinx.coroutines.withContext
 import org.openmrs.android.fhir.auth.AuthStateManager
 import org.openmrs.android.fhir.auth.dataStore
 import org.openmrs.android.fhir.data.PreferenceKeys
+import org.openmrs.android.fhir.data.database.AppDatabase
 import org.openmrs.android.fhir.databinding.ActivityMainBinding
 import org.openmrs.android.fhir.viewmodel.MainActivityViewModel
 import org.openmrs.android.fhir.viewmodel.MainActivityViewModel.Companion.PREFS_NAME
@@ -79,6 +80,8 @@ class MainActivity : AppCompatActivity() {
   @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
 
   @Inject lateinit var fhirEngine: FhirEngine
+
+  @Inject lateinit var database: AppDatabase
 
   private val viewModel by viewModels<MainActivityViewModel> { viewModelFactory }
 
@@ -331,6 +334,7 @@ class MainActivity : AppCompatActivity() {
       .launch(Dispatchers.IO) {
         WorkManager.getInstance(this@MainActivity).cancelAllWork()
         fhirEngine.clearDatabase()
+        database.clearAllTables()
         clearPreferences()
       }
       .invokeOnCompletion {
